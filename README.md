@@ -59,7 +59,7 @@ Alternatively, a `rendererLogs` flag can be set to `true` and included in the ob
 - These are listed in logical order of typical usage
 
 ### initializeHIDDevices
-`initializeHIDDevices` the SDK.
+`initializeHIDDevices` is used to initialize the SDK.
 
 If running in Electron, both sets of requires/imports below are required.
 
@@ -77,7 +77,7 @@ import { initializeHIDDevices } from '@distant/kandy-hid/local'
 
 The local library must then be initialized with an object.
 
-- A `mode` key is **required when used in Electron**. Valid values for `mode` are `'VDI'`, `'desktop'`
+- A `mode` key is **required when used in Electron**. Valid values for `mode` are `'VDI'` or `'desktop'`
 - A `driverInfo` object is **required in Electron when used in VDI**.  The value for `driverInfo` is the object returned from issuing `getInfo()` on the vchannel in the Main process. `driverInfo` can be ignored in Desktop mode.
 - A `rendererLogs` key is optional and has a default value of `false` but can be set to `true` to enable logging to DevTools console. See Logging above.
 
@@ -288,7 +288,7 @@ Options:
 #### Return value
 None
 
-The above are instructions from your app to kandy-hid, requesting that the HID device enter a perform a specific state change.
+The above are instructions from your app to kandy-hid, requesting that the HID device perform a specific state change.
 
 <sup>1</sup> See details regarding 'calls_on_hold' in [call swap documentation](./docs/swap.md).
 
@@ -465,7 +465,7 @@ It's natural during app development that you may put the device into a state tha
 
 ### Device Error
 
-In VDI, if the device is powered off or disconnected from the Client kandy-hid will emit `device_error` on the `HIDFunctionRequest` event.
+In VDI, if the device is powered off or disconnected from the client, the SDK will emit `device_error` on the `HIDFunctionRequest` event.
 
 ```
 kandyHID.on('HIDFunctionRequest', operation => {
