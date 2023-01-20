@@ -27,13 +27,13 @@ const window = new BrowserWindow({
 })
 ```
 
-In your preload, simply `require` this SDK's preload script, which resides under `local/`:
+In your preload, simply `require` this SDK's preload script:
 
 ```
 // preload.js
 
 const { contextBridge, ipcRenderer, ... } = require('electron')
-require('@distant/kandy-hid/local/preload')
+require('@distant/kandy-hid/preload')
 
 
 contextBridge.exposeInMainWorld(...)
