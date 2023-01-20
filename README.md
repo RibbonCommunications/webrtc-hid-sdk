@@ -1,102 +1,96 @@
-# @kandy-io/kandy-hid-sdk
+# Ribbon's WebRTC HID SDK
 
-## Kandy HID SDK
+The HID SDK enables application developers to handle HID device call operations by abstracting device functions.
 
-The Kandy HID SDK enables application developers to handle HID device call operations.<br>
+It is currently supported for use in Chrome-based Browsers (non-VDI) and Electron-based WebRTC applications running on Windows and Mac desktops and VDI environments. Note that use in VDI environments requires the [Kandy VDI Toolkit](https://github.com/Kandy-IO/kandy-vdi-toolkit).<br>
 
-The Kandy HID SDK abstracts HID device functions to the application developer in standard desktop and VDI environments. It is currently supported for use in a Chrome-based Browser (non-VDI) and Electron-based WebRTC applications running on Windows and Mac desktops and VDI environments. Note that use in an eLux VDI environment requires the [Kandy VDI Toolkit](https://github.com/Kandy-IO/kandy-vdi-toolkit) and [Kandy Distant Driver for VDI](https://github.com/Kandy-IO/kandy-distant-vdi/).<br>
+The following Jabra headsets and configurations are currently supported, with support for other devices and vendors possible.<br>
 
-The Kandy HID SDK currently supports the following Jabra headsets and configurations, with support for HID devices from other vendors possible.<br>
+| Device Make / Model | Desktop | VDI eLux | VDI Windows | VDI Mac |  Browser |   Firmware    |
+| :-----------------: | :-----: | :------: | :---------: | :-----: | :------: | :-----------: |
+|   Jabra Engage 65   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 2.0.5, 3.4.1  |
+|   Jabra Engage 50   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 1.24.0, 2.3.1 |
+| Jabra Engage 50 II  | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 3.7.2         |
+|   Jabra Speak 750   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 2.24.0        |
+|   Jabra Evolve2 40  | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 1.19.0        |
 
-| Device Make / Model | Desktop |   VDI eLux  |   VDI Windows   |   VDI Mac   |  Firmware     |
-| :-----------------: | :-----: | :---------: | :-------------: | :---------: | :-----------: |
-|   Jabra Engage 65   | &#9745; |   &#9745;   |     &#9745;     |   &#9745;   | 2.0.5, 3.4.1  |
-|   Jabra Engage 50   | &#9745; |   &#9745;   |     &#9745;     |   &#9745;   | 1.24.0, 2.3.1 |
-|   Jabra Speak 750   | &#9745; |   &#9745;   |     &#9745;     |   &#9745;   | 2.24.0        |
-|   Jabra Evolve2 40  | &#9745; |   &#9745;   |     &#9745;     |   &#9745;   | 1.19.0        |
-
-As of version 2.0.0, the Kandy HID SDK is to be used in Electron's Renderer process, rather than the Main process as in 1.x releases. There is still a requirement to `require` the SDK in Electron's Main Process to maintain backwards-compatibility for configurations where WebHID is not yet used, specifically desktop and "legacy" eLux.
-
-**Legacy eLux** is defined as an eLux VDI environment where the version of Kandy Distant Driver for VDI is <1.6.0; `non-legacy VDI` referenced below is any release of Mac or Windows VDI, and eLux VDI where the version of Kandy Distant Driver for VDI is 1.6.0 or greater.
+As of version 2.0.0, this SDK is to be used in Electron's Renderer process, rather than the Main process. It's necessary to `require` the SDK in Electron's Main Process to maintain backwards-compatibility for configurations where WebHID is not used. See Installation and `initializeHIDDevices` below.
 
 Refer to [the README for version 1.x](./docs/README_v1.MD) for instructions on using 1.x versions of the SDK in Electron's main process.
 
+### Definitions
+Legacy eLux/VDI is defined as an eLux VDI environment where the version of Kandy Distant Driver for VDI is <1.6.0. Therefore, **non-legacy VDI** referenced below is any release of Mac or Windows VDI, and eLux VDI where the version of Kandy Distant Driver for VDI is 1.6.0 or greater.
+
 ## Installation
-### Electron
 
-The SDK is now shipped as a single package with 3 components:
-
-1- one to be used in the local Electron-based app running on the Windows server in Electron's Main process
-<br>2- one to be used in the local Electron-based app running on the Windows server in Electron's Renderer process
-<br>3- one to be used in the remote application - the one running within the VDI Toolkit software on the client PC (eLux Thin Client, Windows/Mac personal PC, etc.)(only required in non-legacy VDI)
-
-Only the top-level package must be added to your package.json (same as in 1.x)
-<br>1- `yarn add file:<path_to_file>/distant-kandy-hid-v2.0.0.tgz`
-
-### Browser
-The Browser SDK can be retrieved from NPM
+The SDK is shipped as a .tgz package that can be retrieved from NPM:
 
 `npm install @kandy-io/kandy-hid`
+
+### Electron Main Process
+`require` the top-level library
+```javascript
+require('@kandy-io/kandy-hid')
+```
+
+### Electron Renderer Process / Browser
+Import `initializeHIDDevices` from '@kandy-io/kandy-hid/local'.
+
+```javascript
+import { initializeHIDDevices } from '@kandy-io/kandy-hid/local'
+```
 
 ## Logging
 
 Logs are not written to file or visible on the console by default.
 
-### Electron Main process
+### Electron Main
 
-To view logs generated by this SDK in Electron's main process (i.e. in desktop mode), in a bash window, do `export DEBUG=kandy-hid` and then launch the app from the same bash window. Logs will be visible in the bash window.
+To view logs generated by this SDK in Electron's main process (in desktop or legacy VDI), in a bash window, do `export DEBUG=kandy-hid` and then launch the app from the same bash window. Logs will be visible in the bash window.
 
-Alternatively, the `setLogger` API can be used to pass in a custom logger such as `electron-log`. If `setLogger` is used, the previous method to send logs to bash is disabled.
+Alternatively, the `setLogger` API can be used to pass in a custom logger such as `electron-log`. If `setLogger` is used, the previous method to view logs in bash is disabled.
 
-### Electron Renderer process / Browser
+### Electron Renderer / Browser
 
-To make logs visible in the renderer process, open application DevTools, go to the Application tab, expand the LocalStorage list, select the app URL then add a new Key/Value pair with Key = `debug` and Value = `kandy-hid`. Close and re-open the app, then again open DevTools, go to the Console and enable Verbose logs.
+To make logs visible in the renderer process, open application DevTools, go to the Application tab, expand the LocalStorage list, select the application URL then add a new Key/Value pair with Key = `debug` and Value = `kandy-hid`. Close and re-open the app, then again open DevTools, go to the Console and enable Verbose logs.
 
-Alternatively, a `rendererLogs` flag can be set to `true` and included in the object passed to `initializeHIDDevices`. This will make logs visible in the DevTools console. If the `rendererLogs` method is used the previous method to send logs to DevTools is disabled.
+Alternatively, a `rendererLogs` flag can be set to `true` and included in the object passed to `initializeHIDDevices`. This will make logs visible in the DevTools console at info level. If the `rendererLogs` method is used, the previous method is disabled.
 
 ## API
-- All of the API’s below are to be called from Electron’s Renderer process in the local app (as opposed to the remote) unless otherwise noted
-- These are listed in logical order of typical usage
+All of the API's below are to be called from the Browser or Electron's Renderer process in the local app (as opposed to the remote) unless otherwise specified.
 
-### initializeHIDDevices
-`initializeHIDDevices` is used to initialize the SDK.
+### `initializeHIDDevices([config])`
 
-If running in Electron, both sets of requires/imports below are required.
+Initializes the SDK with configuration parameters.
 
-##### Electron Main
-`require` the top-level library in Electron's Main process (similar to 1.x)
+A config object is required in Electron VDI, optional otherwise.
+
+```javascript
+{
+  mode: 'desktop'       // valid values are 'desktop', 'browser' and 'VDI'; default is 'desktop' in electron, 'browser' in browser
+  driverInfo: {}        // object returned by 'vchannel.getInfo()' in the Main process, see example below
+  useDriver: false      // see Backwards Compatibility
+  rendererLogs: false   // see Logging
+}
 ```
-require('@distant/kandy-hid')
-```
-
-##### Electron Renderer or Browser
-In the local web application (Renderer), import initializeHIDDevices from '@distant/kandy-hid/local'.
-```
-import { initializeHIDDevices } from '@distant/kandy-hid/local'
-```
-
-The local library must then be initialized with an object.
-
-- A `mode` key is **required when used in Electron**. Valid values for `mode` are `'VDI'` or `'desktop'`
-- A `driverInfo` object is **required in Electron when used in VDI**.  The value for `driverInfo` is the object returned from issuing `getInfo()` on the vchannel in the Main process. `driverInfo` can be ignored in Desktop mode.
-- A `rendererLogs` key is optional and has a default value of `false` but can be set to `true` to enable logging to DevTools console. See Logging above.
 
 Examples:
 
 #### Initializing the local instance for Desktop or Browser
-If your app is operating in a non-VDI environment (desktop or browser), you can call `initializeHIDDevices` as early as you like during your app's initialization. In those cases, `mode` should be `'desktop'` or `'browser'` and `driverInfo` need not be included.
+If your app is operating in a non-VDI environment, you can call `initializeHIDDevices` as early as you like during your app's initialization. In those cases, `mode` can be specified as `'desktop'` or `'browser'`, but is not required. 
 
-```
+```javascript
 const kandyHID = initializeHIDDevices({ mode: 'desktop' })
 ```
 
 #### Initializing the local instance for VDI
-If your app is operating in a VDI environment, initialization of the SDK **must be deferred until after** the VDI channel has been opened. This is necessary because the data provided by calling vchannel.getInfo() must be retrieved from the remote client and passed in to `initializeHIDDevices()`.
+If your app is operating in a VDI environment, initialization of the SDK **must be deferred until after the VDI channel has been opened**. This is necessary because information about the remote client must be retrieved by calling vchannel.getInfo() and included in the configuration object passed in to `initializeHIDDevices` as `driverInfo`.
 
-For example:
+Example:
 
-In your Main process code, where the channel used by the main VDI session is opened:
-```
+In your Electron Main process code, where the channel used by the main VDI session is opened:
+
+```javascript
 const { ipcMain } = require('electron')
 const vchannel = require('@distant/vchannel')
 
@@ -111,8 +105,10 @@ ipcMain.on('getDriverInfo', event => {
   event.returnValue = driverInfo
 })
 ```
-In the Renderer process code, at the point where KandyHID will be initialized:
-```
+
+In the Renderer process code, at the point where the local HID SDK will be initialized:
+
+```javascript
 const mode = 'VDI'
 
 // retrieve driverInfo from the Main process
@@ -120,36 +116,44 @@ const driverInfo = ipcRenderer.sendSync('getDriverInfo')
 
 const kandyHID = initializeHIDDevices({ mode, driverInfo })
 ```
-#### Return value
-Regardless of mode, `initializeHIDDevices` returns an object that contains the following:
 
-1- an event emitter
+**Returns** an object that contains:
 
-This emitter emits `HIDFunctionRequest` events, replacing `ipcRenderer.on('HIDFunctionRequest', ...)` in 1.x. See `HIDFunctionRequest` below.
-
-2- Functions `allowHIDDeviceOpens`, `invokeHIDFunction`, `isSupportedDevice`, `selectHIDDevice`, `setChannel`, `storeMainWindowID`, `getVersion`. See their usage below.
+1. An event emitter that emits `HIDFunctionRequest` events (replacing `ipcRenderer.on('HIDFunctionRequest', ...)` in 1.x). See `HIDFunctionRequest` below.
+2. All APIs that follow.
 
 #### Initializing the Remote (non-legacy VDI only)
-All that's required to initialize the remote is to call `setChannel` with a valid channel object. See below.
+All that's required to initialize the remote is to call `setChannel` with a valid communication object. See below.
 
-### setChannel (non-legacy VDI only)
-It's necessary to call this function on both the local and remote sides when in a VDI environment. In both cases, the function parameter is an object that contains a `send` function that will send a message over the channel to the far end. The object should also contain a key called `receive` that has a value of `undefined`. The KandyHID SDK will insert its own receive function in its place. Note this is the same method used to initialize the KandyJS SDK.
+### `setChannel(commsObject)` (non-legacy VDI only)
+**Must be called on both the local and remote sides in VDI**. The `commsObj` function parameter is an object that contains
 
-Calling this function in a desktop environment has no effect.
+* a `send` function that will send a message over the channel to the far end
+* a key called `receive` that has a value of `undefined`. The SDK will insert its receive function here. This is the same method used to initialize the KandyJS SDK.
+
+Examples:
 
 #### Local
 On the local side, the `setChannel` function is part of the object returned by `initializeHIDDevices`.
 
+```javascript
+const kandyHID = initializeHIDDevices({
+  mode: 'VDI',
+  driverInfo: ipcRenderer.sendSync('getDriverInfo')
+})
+
+kandyHID.setChannel({...})
 ```
-const { setChannel } = kandyHID
-```
+
 #### Remote
 On the remote side, `setChannel` is imported directly from the remote library:
+
+```javascript
+import { setChannel } from '@kandy-io/kandy-hid/remote'
 ```
-import { setChannel } from '@distant/kandy-hid/remote'
-```
-Usage is the same on both local and remote sides:
-```
+
+Usage is the same in both local and remote:
+```javascript
 const HIDChannel = {
   send: message => {
     yourSendFunction('hid', message)
@@ -169,22 +173,13 @@ yourReceiveFunction(messageType, ...data) {
   }
 }
 ```
-### storeMainWindowID(id)
-Parameters:
-```
-Type: number
-Default: none
-```
-#### Return value
-None
 
-kandy-hid emits actions/events in the Electron Renderer on the `HIDFunctionRequest` event. In order to do this, it needs the window id of the Electron renderer process that should receive these messages.
+### `storeMainWindowID(id)` (desktop and legacy VDI only)
+This SDK emits events in the Electron Renderer on the `HIDFunctionRequest` event. In order to do this, it needs the id of the Electron renderer window that should receive these messages.
 
 Example:
 
-In Renderer process:
-
-```
+```javascript
 const electronRemote = require('electron').remote
 
 kandyHID.storeMainWindowID(
@@ -192,21 +187,15 @@ kandyHID.storeMainWindowID(
 )
 ```
 
-### isSupportedDevice(label)
-Parameters
-```
-Type: string
-```
-#### Return value
-boolean
+### `isSupportedDevice(label)`
 
-Allows the app to query kandy-hid whether a device is supported for use or not. Returns true/false.
+Accepts a `string`, typically the label component of a deviceInformation object (see selectHIDDevice).
+
+**Returns** a boolean indicating whether a device is supported for use or not.
 
 Example:
 
-In the Renderer process:
-
-```
+```javascript
 function selectMicrophone(deviceObject) {
   const result = kandyHID.isSupportedDevice(deviceObject.label);
 
@@ -218,95 +207,82 @@ function selectMicrophone(deviceObject) {
 }
 ```
 
-This API will return true for supported devices listed in the introductory section and for 'Jabra Evolve 80'. It will return false for any other string.
-
-Note that the device label passed in is compared against the device names as they appear in the introduction. The label must **contain** one of these names in order for this API to return true - it does not have to match exactly.
+This API will return true for supported devices listed in the introductory section and for 'Jabra Evolve 80'. It will return false for any other string. The device label passed in is compared against the device names as they appear in the introduction. The label must **contain** one of these names in order for this API to return true - it does not have to match exactly.
 
 Examples:
 ```
 kandyHID.isSupportedDevice('G/N Audio Jabra Speak 750 Mono'); // true
-kandyHID.isSupportedDevice('abra Speak 7'); // false
+kandyHID.isSupportedDevice('Jabra Speak 750'); // true
+kandyHID.isSupportedDevice('Jabra Speak 75'); // false
 ```
 
-Also note that `isSupportedDevice()` should **not** be used to filter devices before selecting them via `selectHIDDevice()`. For proper operation the SDK should be informed when user selections change, whether a supported HID device is selected or not.
+It's **important** that `isSupportedDevice()` **not** be used to filter devices before selecting them via `selectHIDDevice()`. For proper operation the SDK should be informed when device selections change, whether a supported HID device is selected or not. If your app initially selects a HID device for ringing, then later selects a different device for ringing, if you don't send the second device selection, the HID device will continue to ring unless you check/filter HID operations too. This SDK does that checking for you; just send all device selections into it, it'll take care of the rest.
 
-### selectHIDDevice(deviceType, deviceInformation)
-Parameters
-```
-deviceType:
-Type: string
-Options: 'microphone' || 'speakers' || 'alert_speakers'
+### `selectHIDDevice(deviceType, deviceInformation)`
 
-deviceInformation:
-Type: object
-```
-#### Return value
-None
+Registers an association between a HID device (e.g. Jabra Engage 65) and a media device type (e.g. microphone).
 
-Registers an association between a given HID device (e.g. Jabra Engage 65) and a media device type (i.e. microphone). Once associated, HID functions (see `invokeHIDFunction()`) related to microphone (e.g. mute) will be performed using the specified device.
+Once the same device is selected for all 3 device types, a connection to the device will be established. That means, this API must be called by your app 3 times before a device can be used, once for each `'deviceType'`: 'microphone', 'speakers' and 'alert_speakers'.
 
-The `deviceInformation` object must contain a `label` property.
-This `label` (string) **must contain one of the supported device make/models exactly as listed in the table at the top of this document** (the label can contain other text too, but this string must exist).
+The `'deviceInformation'` object will typically be a `'MediaDeviceInfo'` as returned by [`enumerateDevices`](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices), but the only requirement is that it contain a `label` property. The `label` must match or contain one of the device model names before a device will be opened for use.
 
-### allowHIDDeviceOpens(boolean)
-Parameters
+This API does not return anything, however calling it will cause the `deviceSelectionChange` event to be emitted.
+When the same device is selected for all device types, the `deviceStateChange` event will be emitted indicating the device is open. When the selections no longer match, it'll be emitted again indicating the device is closed.
 
-```
-Type: boolean
-Default: true
-Other options: false
-```
-#### Return value
-None
+### `allowHIDDeviceOpens(bool)`
+Allows or disallows HID devices from being opened. True by default.
 
-Allow or disallow HID devices from being opened. Defaults to true.
-Devices should be closed before exiting an application; attempting to exit an app with an open device may cause issues. Depending on your app's design it may be necessary to prevent devices from being opened (after they've been closed) during app shutdown procedures.
+Devices should be closed before exiting an application; attempting to exit an app with an open device may cause issues. Depending on what your app does during shutdown, it may be necessary to prevent devices from being opened (after they've been closed) during app shutdown procedures.
 
-This is included for backwards-compatibility only. The SDK closes devices automatically during app exit.
+Included for backwards-compatibility only. The SDK closes devices automatically during app exit.
 
-### invokeHIDFunction(operation)
-Parameters
-```
-Type: string
-Default: none
-Options:
-'call_start': Tells kandy-hid an outgoing call has started; causes the device to go offHook.
-'call_accept': Tells kandy-hid an incoming call has started; causes the device to go offHook.
-'call_reject': Tells kandy-hid an incoming call has been rejected; returns the device to its previous state (idle, on call, ...)
-'call_end': Tells kandy-hid an active call has ended; returns the device to default state (from offHook, muted)
-'call_mute': Instructs kandy-hid to mute the HID device. On some devices this causes visual or audible alerts.
-'call_unmute': Instructs kandy-hid to unmute the HID device. On some devices this causes visual or audible alerts.
-'start_ringing': Instructs kandy-hid to cause the HID device to start ringing (incoming call)
-'stop_ringing': Instructs kandy-hid to cause the HID device to stop ringing. It's not necessary to call 'stop_ringing' when a call is answered, ended or rejected, ringing is stopped inherently by those actions.
-'call_hold': Instructs the HID device to perform a call hold action. On some devices this causes visual or audible alerts.
-'call_resume': Instructs the HID device to perform a call unhold action. On some devices this causes visual or audible alerts.
-'offhook': Instructs the HID device to go offhook.
-'onhook': Instructs the HID device to go onhook.
-'reset': Resets the device to default state.
-'calls_on_hold': Takes a true/false parameter. Informs kandy-hid when calls are put on hold in the app (1)
-```
-#### Return value
-None
+### `invokeHIDFunction(operation)`
 
-The above are instructions from your app to kandy-hid, requesting that the HID device perform a specific state change.
+Sends an instruction to the SDK to cause a specific state change on a device.
 
-<sup>1</sup> See details regarding 'calls_on_hold' in [call swap documentation](./docs/swap.md).
+Operation (`string`) may be one of:
+* 'call_start': indicates that an outgoing call has started; causes the device to go offhook
+* 'call_accept': indicates that an incoming ringing call has ben answered; causes the device to stop ringing and go offhook
+* 'call_reject': indicates that an incoming ringing call has been rejected; stops device alerting / ringing
+* 'call_end': indicates that an active call has ended; returns the device to default state
+* 'call_mute': mutes the HID device. On some devices this causes visual or audible alerts
+* 'call_unmute': unmutes the HID device
+* 'start_ringing': causes the HID device to perform its alerting function (ringing, blinking, etc.)
+* 'stop_ringing': causes the HID device to stop its alerting function. Note that sending any call state change operation will stop device alerting, so it's not necessary to call 'stop_ringing' when a call is answered or rejected
+* 'call_hold': causes the HID device to perform a call hold action. On some devices this causes audible alerts or visible state changes
+* 'call_resume': causes the HID device to exit its hold state
+* 'offhook': causes the HID device to go offhook
+* 'onhook': causes the HID device to go onhook
+* 'reset': resets the device to default state
+* 'calls_on_hold': informs the SDK when calls are put on hold in the app. See [call swap documentation](./docs/swap.md).
 
-### getVersion()
-Parameters: `none`
-
-Returns: `string`
-
-Returns the current version of the SDK as a string.
+### `getVersion()`
+**Returns** the current version of the SDK as a string.
 
 ## Events
-### HIDFunctionRequest(operation)
-When a user performs an action on a HID device, kandy-hid will send an interpretation of that action to the app. For example, if the user presses the mute button during an active call, kandy-hid will send a 'call_mute' operation to the app. 
+### `HIDFunctionRequest(operation)`
 
-These messages are emitted in the Electron renderer process window identified by `storeMainWindowID()` as an event. The web app must have an handler to receive these events. The device-initiated events have identifier `HIDFunctionRequest`. These events are emitted on the object returned by `initializeHIDDevices()`.
+When a user performs an action on a HID device, the SDK will interpret the action based on previous state and send this interpretation to the app. For example, if the user presses the mute button during an active call, 'call_mute' will be emited to the app.
 
-```
-const kandyHID = initializeHIDDevices({ mode })
+Operation will be one of the following:
+* 'call_start': the device has gone offhook indicating an attempt to originate a call
+* 'call_accept': the device has gone offhook while it was in ringing state, indicating an attempt to answer the call
+* 'call_reject': an incoming ringing call has been rejected by the device
+* 'call_end': the device has gone onhook, indicating an attempt to end the active call
+* 'call_mute': the device's mute button was pushed, indicating an attempt to mute the active call
+* 'call_unmute': the device's mute button was pushed while in the muted state, indicating an attempt to unmute the active call
+* 'call_hold': the device's hold function sequence was invoked, indicating an attempt to put the active call on hold
+* 'call_resume': the device's resume function sequence was invoked, indicating an attempt to resume/unhold the held call
+* 'call_swap': the user has indicated the desire to swap between an active and a held call (1)
+* 'device_error': (browser and VDI only) the SDK has detected a previously connected device has been disconnected (power loss or physical disconnection)
+* 'channel_error': (legacy VDI eLux only) the SDK has detected a loss of communication with the Thin Client
+
+These messages are emitted in the Electron renderer window identified by `storeMainWindowID()`, or the current renderer process on the object returned by `initializeHIDDevices()`.
+
+The web app must have an handler to receive these events. Device-initiated events have identifier `HIDFunctionRequest`.
+
+```javascript
+const kandyHID = initializeHIDDevices()
 
 kandyHID.on('HIDFunctionRequest', operation => {
   switch (operation) {
@@ -326,71 +302,71 @@ window.addEventListener('beforeunload', () => {
 })
 ```
 
-'operation' will be one of the following:
+**IMPORTANT** you'll notice that the list of operations sent up to your app as a result of a user performing an action on the device are a subset of the operations your app sends via `invokeHIDFunction()`. That is not coincidental. When this SDK notifies your app of a state change, it's important that you take whatever actions are necessary within your app (i.e. invoke your mute function), but also **replay the operation back to the SDK to update the device's state**<sup>1</sup>. This is necessary to keep your app, the SDK and the device in sync. Your app is in charge of updating device state via this SDK. The device will not change state, and this SDK will not modify device state, unless instructed to do so by your app (other than in error scenarios).
+
+For example, if a user presses the mute button on a HID device during an active call, the device does not enter the mute state immediately; to complete a mute operation, your app should mute the active call and then, if successful, send a 'call_mute' instruction to mute the device. If for whatever reason your app fails to mute the active call, it should not replay the mute instruction, again in order to keep everything in sync.
+
+<sup>1</sup> Do not replay operations 'device_error', 'channel_error' or 'call_swap' back to the SDK. For a device-initiated call swap, your app should send 'call_hold' followed by 'call_resume'. See [call swap documentation](./docs/swap.md).
+
+### `deviceSelectionChange`
+Each time that `selectHIDDevice()` is called, a `deviceSelectionChange` event will be emitted providing details on selected devices, for example:
+
+```javascript
+{
+  selectedDevices: {
+    microphone: { label: 'Default - Jabra Speak 710 (0b0e:2475)', supported: true },
+    speakers: { label: 'Default - Jabra Speak 710 (0b0e:2475)', supported: true },
+    alert_speakers: { label: 'Default - Jabra Speak 710 (0b0e:2475)', supported: true }
+  },
+  availableDevices: {...}
+}
 ```
-Type: string
-Default: none
-Options:
-'call_start': kandy-hid is telling your app the device has gone offhook, in an attempt to start a call (see Known Issues)
-'call_accept': kandy-hid is telling your app that a ringing call has been answered on the device
-'call_reject': an incoming ringing call has been rejected by the device
-'call_end': an active call has been ended by the device (the device has gone onhook)
-'call_mute': an active call has been muted on the HID device
-'call_unmute': an active muted call has been unmuted on the HID device
-'call_hold': an active call has been put on hold from the device
-'call_resume': a held call has been taken off of hold from the device
-'call_swap': the user has indicated the desire to swap between an active and a held call (1)
-'device_error': (VDI only) kandy-hid has detected a previously connected device has been disconnected (power loss or physical disconnection)
-'channel_error': (VDI eLux only, only when HID Driver/DLL is used) kandy-hid has detected a loss of communication with the Thin Client
+
+(Note that `availableDevices` may be empty until a device is opened for use.)
+
+#### Error Parameter
+Using a HID device in a browser requires that the user give the browser permission to access the device. When a device is selected for use, if the user has not previously granted access to the selected device, the browser will prompt the user for access. If access is granted, the device will be opened and a `deviceStateChange` event will be emitted. If the user does not grant access, the `deviceSelectionChange` event will be emitted with an `error` parameter, indicating that the device has been properly selected, but is not available for use. When the error parameter is included in the emitted data, the only way to render the device usable is to re-select the device and manually grant permission. Therefore, when the error parameter is present, you must tell the user what to do via your UI.
+
+Example:
+```javascript
+kandyHID.on('deviceSelectionChange', details => {
+    if (details.error) {
+        alert('No access to selected device! Re-select device and grant access when prompted');
+    }
+    console.log('HID: deviceSelectionChange: ', details);
+});
 ```
 
-**IMPORTANT** you'll notice that the list of operations sent up to your app as a result of someone having taken an action on the device are a subset of the operations your app sends to kandy-hid via `invokeHIDFunction()`. That is not coincidental!
+### `deviceStateChange`
+When selections for all device selections match for a given supported HID device, a connection to the device will be established, after which commands may be sent to the device and actions taken on the device will result in events being emitted into the parent appication. At this point the `deviceStateChange` event will be emitted indicating the device is 'open'.
 
-When kandy-hid notifies your app of a state change, it's important that you take whatever actions are necessary within your app (i.e. invoke your mute function), but also **replay the operation back to kandy-hid to update the device's state**<sup>1</sup>. This is necessary to keep your app, the SDK and the device in sync.
-
-For example, if a user presses the mute button on a HID device during an active call, the device does not enter the mute state immediately; to complete a mute operation, your app should mute the active call and then send a 'call_mute' instruction to kandy-hid to mute the device. If for whatever reason your app fails to mute the active call, it should not replay the mute instruction to kandy-hid, again keeping everything in sync.
-
-Your app is in charge of updating device state via this SDK. This SDK does not modify device state unless instructed to do so (other than in error scenarios).
-
-<sup>1</sup> Do not replay operations 'device_error', 'channel_error' or 'call_swap' operation back to kandy-hid. For a device-initiated call swap, your app should send kandy-hid 'call_hold' followed by 'call_resume'. See details regarding 'call_swap' in [call swap documentation](./docs/swap.md).
+If the device is disconnected or device selections change such that they no longer match, the connection to the device will be closed. At this point the `deviceStateChange` event will be emitted indicating the device is 'closed'.
 
 ## Use Cases
 
-### Actions taken from within the app:
-
-- For an incoming call, sending 'start_ringing' will cause the device (base + headset (if connected)) to perform its alerting function (ringing, blinking, etc.)
-  - Ringing will stop if any subsequent call state change occurs (answer, reject, etc.)
-  - You can instead send 'stop_ringing' explicitly if no call state transition will occur (e.g. as a test of device alerting)
-- Starting (originating) a call: sending 'call_start' to the device will cause the device to go offhook and attach to the active call.
-- Answering an incoming call: sending 'call_accept' to the device will cause the device to go offhook and attach to the active call.
-- Rejecting an incoming call: while the device is in ringing state, sending 'call_reject' will return the device to its previous state
-- Ending a call: sending 'call_end' to the device will cause the device to hang up.
-- Muting / unmuting an active call: sending 'call_mute' / 'call_unmute' will cause the device to perform the requested operation.
-- Holding / resuming a call: sending 'call_hold' / 'call_resume' will cause the device to perform the requested operation.
-- Performing a call swap: when preconditions are met, sending a 'call_hold' followed immediately by 'call_resume' will cause the device to perform swap between active and held calls. See [call swap documentation](./docs/swap.md).
-
-### Actions performed on the device:
-
-#### Answering an incoming call
-
+### Answering an incoming call
 An incoming ringing call can be answered by:
+* undocking the headset from the base (if present)
+* pressing the MultiFunction button on the headset or base (if present)
+* pressing the green Call Start/Answer button on the base or the Call button for single-button devices
+* lowering the microphone boom (Evolve2 40 only, providing the device is not already on a call)
 
-- undocking the headset from the base (if present)
-- pressing the MultiFunction button on the headset
-- pressing the green Call Start/Answer button on the base or the Call button for single-button devices
-- lowering the microphone boom (Evolve2 40 only) (providing the device is not already on a call)
+Any of these actions will cause 'call_accept' to be emitted. The device must be in a ringing state for an offhook action to be interpreted as 'call_accept'.
 
-The answer action will be passed up to the app as a 'call_accept' operation on the HIDFunctionRequest event.
+### Answering an incoming call while on another call
 
-**In order to answer an incoming call while the device is already active on a call, the device's call hold/resume action must be performed. See Hold/Resume below.**
+#### Jabra Engage 50 II
+* pressing and holding the Call Start / End button on the Link controller for 1-2 seconds
 
-#### Originating an outgoing call
+For all other devices, the device's call hold/resume action should be performed. See Hold/Resume below.
 
-If the device goes off hook using any of the methods described previously, it will send a 'call_start' operation on the HIDFunctionRequest event. It's then up to your app to take the appropriate action to start a call. If your app cannot successfully start a call in that case, you should send 'call_failure', followed by 'call_failure_finish' 1 second later to return the device to default state (since it may be in the offhook state).
+### Originating an outgoing call
 
-**NOTE that the Engage 65 base must be in "Soft Phone Mode" prior to going offhook**. This can be accomplished by pressing the MultiFunction button or the Call Answer button for 1 second prior to removing the headset from the base. See device User Manuals for more details.
+If the device goes offhook using any of the methods described above and is **not** in a ringing state, it will emit a 'call_start' operation on the HIDFunctionRequest event. It's then up to your app to take the appropriate action to start a call. If your app cannot successfully start a call in that case, it should send 'call_failure', followed by 'call_failure_finish' 1 second later to return the device to default state. Failure to do so may result in the device being left in the offhook state.
 
-```
+**NOTE that the Engage 65 base must be in "Soft Phone Mode" prior to going offhook**. This can be accomplished by pressing the MultiFunction button on the headset or the Call Answer button on the base for 1 second prior to removing the headset from the base. See the device's User Manual for more details.
+
+```javascript
 kandyHID.on('HIDFunctionRequest', (operation) => {
   switch (operation) {
     case 'call_start':
@@ -405,114 +381,82 @@ kandyHID.on('HIDFunctionRequest', (operation) => {
 });
 ```
 
-#### Ending an active call
-
+### Ending an active call
 An active call can be ended by:
+* replacing the headset on the base
+* pressing the MultiFunction button
+* pressing the red Call End button on the base or the Call button for single-button devices
 
-- replacing the headset on the base
-- pressing the MultiFunction button on the headset
-- pressing the red Call End button on the base or the Call button for single-button devices
+### Muting / Unmuting
+When on an active call, pressing the device's Mute button will cause 'call_mute' to be emitted. If the device is muted, 'call_unmute' will be emitted. 
 
-#### Muting / unmuting an active call
-
-Once on an active call, the call can be muted or unmuted from the device by pressing the Mute button on the base.
 On the Evolve2 40, the call can also be muted by raising the microphone boom and unmuted by lowering it.
 
-The new mute state will be passed up to the app as 'call_mute' or 'call_unmute'.
-
-#### Hold / Resume
-
+### Hold / Resume
 When the device is engaged in an active call, the call can be placed on hold or resumed by:
 
-##### Jabra Engage 65
+#### Jabra Engage 65
 - pressing the green Call Answer button on the base
 - pressing and holding the Multi-Function button on the headset for 1-2 seconds
 
-##### Jabra Engage 50
-- pressing and holding the Call Answer / End button on the base for 1-2 seconds
+#### Jabra Engage 50
+- pressing and holding the Call Answer / End button on the Link controller for 1-2 seconds
 
-##### Jabra Speak 750
+#### Jabra Speak 750
 - pressing the green Call Answer button on the base
 
-##### Jabra Evolve2 40
+#### Jabra Evolve2 40
 - pressing and holding the Multi-Function button on the headset for 1-2 seconds
 
-#### Call Reject
+#### Jabra Engage 50 II
+- pressing and holding the Multi-Function / Mute button on the Link controller for 1-2 seconds
+
+### Call Reject
 
 Rejecting an incoming call can be accomplished by:
 
-##### Jabra Engage 65
+#### Jabra Engage 65
 - pressing the red Call End button on the base
 - double-clicking the Multi-Function button on the headset
 
-##### Jabra Engage 50
+#### Jabra Engage 50
 - double-clicking the Call Answer / End button on the base
 
-##### Jabra Speak 750
+#### Jabra Speak 750
 - pressing the red Call End button on the base
 
-##### Jabra Evolve2 40
+#### Jabra Evolve2 40
 - double-clicking the Multi-Function button on the headset
 
-#### Call Swap
+#### Jabra Engage 50 II
+- double-clicking the Call Start / End button on the Link controller
+
+### Call Swap
 - When preconditions are met, performing a 'call_hold' action on the device (see above) will signal the controlling application to swap between the active and a held call. See [call swap documentation](./docs/swap.md).
 
 ## Error Handling
+Most errors - device connection, disconnection, power off, etc. - are handled gracefully and logged.
 
-Most errors are handled gracefully within kandy-hid - device connection, disconnection, power off, etc. Keep an eye on logs.
-
-It's natural during app development that you may put the device into a state that is out of sync with your app. In that case, send it a 'reset' to return kandy-hid and the device to default state.
+It's natural during app development that you may put the device into a state that is out of sync with your app. In that case, send it a 'reset' to return the device to default state.
 
 ### Device Error
+In VDI or Browser, if the active/selected device is powered off or disconnected from the Client `device_error` will be emitted on the `HIDFunctionRequest` event. In order to use the same or another device, it must be (re)selected.
 
-In VDI, if the device is powered off or disconnected from the client, the SDK will emit `device_error` on the `HIDFunctionRequest` event.
-
-```
-kandyHID.on('HIDFunctionRequest', operation => {
-  switch (operation) {
-    case 'device_error':
-      // Take whatever actions you deem appropriate - e.g. alert the user
-      console.error('kandy-hid has reported a device error);
-      break;
-    }
-}
-```
-
-### Channel Error
-In VDI eLux mode when the Kandy HID Driver for VDI is being used and communication between kandy-hid software running within the Electron app and the Driver running on the Thin Client is lost for any reason over the virtual communication channel, kandy-hid will emit `channel_error` on the `HIDFunctionRequest` event.
-
-The kandy-hid channel will remain down and not automatically attempt to reconnect. Once your app chooses to reestablish communication, reissue `initializeHIDDevices()` (`mode` -- `'desktop'` vs `'VDI'` is not required in this case), followed by all necessary `selectHIDDevice`'s.
-
-```
-kandyHID.on('HIDFunctionRequest', operation => {
-  switch (operation) {
-    case 'channel_error':
-      console.error('kandy-hid has reported a communication error over the virtual channel');
-      break;
-    }
-}
-```
-
-## Known Issues / Limitations
-
-- The same device must be selected as active microphone, speakers and alert speakers via `selectHIDDevice()`.
-- Going offhook on the Jabra Engage 65, Speak 750 or Evolve 2/40 may not cause 'call_start' to be sent up to the app due to non-deterministic behaviour of these devices in this scenario. Support tickets (272, 277) have been created with the device vendor.
-- In VDI eLux when the Kandy HID Driver for VDI is used, the Jabra Speak 750 is known to conflict with either the mouse or keyboard when offhook. The issue has been addressed by the vendor in the RP6 / 64-bit version of the eLux OS image. There are no plans to address it in the RP5 / 32-bit version.
-- See limitations relating to use of older versions of Kandy HID Driver for VDI in [compatibility documentation](./docs/compatibility.md).
-- In Windows VDI, the LEDs on the Jabra Engage 50 may not be responsive if the device is not at factory default settings. If the Engage 50 LEDs are not changing state during call operations, first disconnect and reconnect the device. If the condition persists, reset the device using the latest available version of Jabra Direct. Note that kandy-hid always assumes devices are at factory default settings.
-- In eLux VDI, it has been found that connecting a HID device to the Thin Client may cause eLux to select it as the system default device. As well, the previously selected device may be muted. Both of these state changes may affect in-progress and future calls until rectified. Resolution is to unmute and re-select devices in the eLux system menu. This is not related to the Kandy HID libraries but standard eLux behaviour.
-- If a Jabra Engage 50 is using firmware version 2.3.1, it will not respond correctly to the 'stop_ringing' instruction; the headset will stop blinking, but the Link device will continue to blink indefinitely. The only known way to resolve the situation is to unplug and reconnect the device from the host PC. This issue affects all configurations when firmware 2.3.1 is used. Firmware version 1.24 works correctly and so is recommended in order to avoid this issue. The device vendor has indicated that this issue has been corrected in firmware version 2.10.0, now released.
-- Issuing a call hold action from a HID device (e.g. a long-press on a single-buttoned device) may cause Apple Music on the client to start in a Mac VDI environment. This is native MacOS behaviour and not related to the Kandy HID libraries.
+### Channel Error (legacy VDI only)
+In legacy VDI eLux and virtual channel communication between the local SDK and the Driver running on the Thin Client is lost for any reason, `channel_error` will be emitted on the `HIDFunctionRequest` event. HID's channel will remain down and not automatically attempt to reconnect. Once your app chooses to reestablish communication, reissue `initializeHIDDevices()` and then reselect the device for all device types.
 
 ## Backwards Compatibility
-
 When used in a Citrix eLux VDI environment, this SDK is backwards-compatible with the most recent and one (1) previous version of Kandy HID Driver for VDI (DLL) (official releases only). This is intended to allow Kandy HID Driver for VDI upgrades on the Thin Client installed-base to lag behind application updates.
 
-**NOTE** As of version 2.2.0, this SDK will use WebHID by default in eLux VDI providing the appropriate version of Kandy VDI Toolkit is present on the Thin Client.
+See the [compatibility matrix](./docs/compatibility.md) for Kandy HID Driver for VDI and Kandy HID SDK version compatibility information.
 
-If it's necessary to have your application use the Kandy HID Driver for VDI rather than WebHID, make the following change to the sample code in `Initializing the local instance for VDI`:
+**NOTE** As of version 2.3.0, this SDK will use WebHID by default in non-legacy eLux VDI. If it's necessary to have your application use the Kandy HID Driver for VDI rather than WebHID, set the `useDriver` flag in `driverInfo` to true.
 
-```
+Example:
+
+Make the following change to the sample code in `Initializing the local instance for VDI`:
+
+```javascript
 let driverInfo = ipcRenderer.sendSync('getDriverInfo')
 
   // set 'useDriver' to true to force use of the HID Driver/DLL
@@ -523,16 +467,21 @@ let driverInfo = ipcRenderer.sendSync('getDriverInfo')
 
 const kandyHID = initializeHIDDevices({ mode, driverInfo })
 ```
-This change could be made instead in the Main process at the point where `getInfo()` is called.
-
-See the [compatibility matrix](./docs/compatibility.md) for Kandy HID Driver for VDI and Kandy HID SDK version compatibility information.
 
 ## Electron Security
+Use of Electron security features such as nodeIntegration, webSecurity and enableRemoteModule have no effect on this SDK's operation. This SDK includes a preload script you can include in your preload script for use with Electron's context isolation feature. See details [here](./docs/context-isolation.md).
 
-The kandy-hid SDK is compatible with recent Electron security measures such as context-isolation. To use context-isolation with this SDK, a one-line change is required to your preload script. See details [here](./docs/context-isolation.md).
-
-Enabling or disabling other Electron security features such as nodeIntegration, webSecurity and enableRemoteModule have no effect on this SDK's operation.
+## Known Issues / Limitations
+- The same device must be selected as active microphone, speakers and alert speakers via `selectHIDDevice()`.
+- Going offhook on the Jabra Engage 65, Speak 750 or Evolve 2/40 may not cause 'call_start' to be sent up to the app due to non-deterministic behaviour of these devices in this scenario. Support tickets (272, 277) have been created with the device vendor.
+- In VDI eLux when the Kandy HID Driver for VDI is used, the Jabra Speak 750 is known to conflict with either the mouse or keyboard when offhook. The issue has been addressed by the vendor in the RP6 / 64-bit version of the eLux OS image. There are no plans to address it in the RP5 / 32-bit version.
+- See limitations relating to use of older versions of Kandy HID Driver for VDI in [compatibility documentation](./docs/compatibility.md).
+- In Windows VDI, the LEDs on the Jabra Engage 50 may not be responsive if the device is not at factory default settings. If the Engage 50 LEDs are not changing state during call operations, first disconnect and reconnect the device. If the condition persists, reset the device using the latest available version of Jabra Direct. Note that kandy-hid always assumes devices are at factory default settings.
+- In eLux VDI, it has been found that connecting a HID device to the Thin Client may cause eLux to select it as the system default device. As well, the previously selected device may be muted. Both of these state changes may affect in-progress and future calls until rectified. Resolution is to unmute and re-select devices in the eLux system menu. This is not related to the Kandy HID libraries but standard eLux behaviour.
+- If a Jabra Engage 50 is using firmware version 2.3.1, it will not respond correctly to the 'stop_ringing' instruction; the headset will stop blinking, but the Link device will continue to blink indefinitely. The only known way to resolve the situation is to unplug and reconnect the device from the host PC. This issue affects all configurations when firmware 2.3.1 is used. Firmware version 1.24 works correctly and so is recommended in order to avoid this issue. The device vendor has indicated that this issue has been corrected in firmware version 2.10.0, now released.
+- Issuing a call hold action from a HID device (e.g. a long-press on a single-buttoned device) may cause Apple Music on the client to start in a Mac environment. This is native MacOS behaviour and not related to this SDK.
+- The Jabra Engage 50 II may be muted by the user while the call/device is on hold. However, when on hold, the device does not signal this state change to the SDK to interpret and forward to the controlling app. As a result, the device may end up in a muted state, out of sync with the parent app, once the call is resumed. Once in that state the device can be unmuted from the device.
+- Use of Microsoft Teams or any other HID-capable application may interfere with this SDK's ability to reliably control HID devices. To ensure predictable behaviour and avoid undesirable side-effects, MS Teams should not be installed on the same PC where an application using this SDK is in use.
 
 ## CHANGELOG
-
 See [CHANGELOG](./CHANGELOG.md).
