@@ -69,7 +69,6 @@ A config object is required in Electron VDI, optional otherwise.
 {
   mode: 'desktop'       // valid values are 'desktop', 'browser' and 'VDI'; default is 'desktop' in electron, 'browser' in browser
   driverInfo: {}        // object returned by 'vchannel.getInfo()' in the Main process, see example below
-  useDriver: false      // see Backwards Compatibility
   rendererLogs: false   // see Logging
 }
 ```
