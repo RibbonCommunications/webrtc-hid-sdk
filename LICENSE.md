@@ -1,1 +1,1 @@
-(c) Copyright 2022 Ribbon Communications, all rights reserved.
+*Copyright © 2020-2023 Ribbon Communications Operating Company, Inc.

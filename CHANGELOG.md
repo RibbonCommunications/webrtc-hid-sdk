@@ -4,7 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2.3.0 - 2022-01-20
+## 2.4.0 - 2023-07-17
+
+### Changed
+- The SDK is renamed / rebranded from @distant/kandy-hid and @kandy-io/kandy-hid to @rbbn/webrtc-hid. This affects how the SDK is imported in the app; review the README for current instructions
+
+### Fixed
+- An issue that prevents proper closing and opening of devices when the app switches directly between two supported devices (KAJ-1836)
+- Call reject on the Jabra Speak 750 in WebHID configurations (KAJ-1864)
+
+### Removed
+- Support for HID Driver for VDI versions lower than 1.4
+- Dependencies on @distant and @rbbn packages in the package.json file. Either @distant or @rbbn vchannel and utils packages **must now be provided by your application** for proper operation in VDI
+
+## 2.3.0 - 2023-01-20
 
 ### Added
 - Support for the Jabra Engage 50 II in all configs

@@ -1,6 +1,6 @@
 # Electron Context Isolation
 
-Kandy-hid requires the ability to communicate between the Renderer and Main processes via IPC.
+This SDK requires the ability to communicate between the Renderer and Main processes via IPC.
 This SDK includes a preload script that exposes the specific, targeted IPC messaging functions necessary for its proper operation.
 
 So, if your app enables context-isolation, all that's required is to `require` this SDK's preload script in your app's preload script.
@@ -33,7 +33,7 @@ In your preload, simply `require` this SDK's preload script:
 // preload.js
 
 const { contextBridge, ipcRenderer, ... } = require('electron')
-require('@distant/kandy-hid/preload')
+require('@rbbn/webrtc-hid/preload')
 
 
 contextBridge.exposeInMainWorld(...)
