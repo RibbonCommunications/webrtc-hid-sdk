@@ -318,12 +318,6 @@ Closes handle(s) to open device(s)
 
 Closes handle(s) to open device(s) attached to the client and closes the virtual channel. Since many actions in the VDI environment are asynchronous, this function returns a Promise (in both Desktop and VDI).
 
-## Exports
-
-In addition to the API functions listed previously, kandy-hid exports all of its constants in an attempt to make your integration task easier.
-
-See the complete list of things that can be imported into your app [here](./constants.md).
-
 ## Use Cases
 
 ### Actions taken from within the app:

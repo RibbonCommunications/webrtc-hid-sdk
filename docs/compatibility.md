@@ -1,28 +1,15 @@
 # Backwards Compatibility
 
-When used in a Citrix VDI eLux environment, the Kandy HID SDK is backwards-compatible with the most recent and one (1) previous version of Kandy HID Driver for VDI (DLL) (official releases only). This is intended to allow Kandy HID Driver for VDI upgrades on the Thin Client installed-base to lag behind application updates.
+When used in a Citrix VDI eLux environment, the WebRTC HID SDK is backwards-compatible with the most recent and one (1) previous version of WebRTC HID Driver for VDI (DLL) (official releases only). This is intended to allow WebRTC HID Driver for VDI upgrades on the Thin Client installed-base to lag behind application updates.
 
-## Kandy HID SDK and Kandy HID Driver for VDI Compatibility Matrix
+## Supported WebRTC HID SDK and HID Driver for VDI Versions
+Ribbon's standard support model provides full support for the current release and limited support for the previous release. This applies to both the HID SDK and Driver for VDI. When a new version of either SDK or Driver for VDI is released, it becomes the "current release", and so support ends for the N-2 release.
 
-| Kandy HID SDK Version | Compatible Kandy HID Driver for VDI Version(s)<sup>*</sup>    | Comments      |
-| :-------------------: | :-----------------------------------------------------------: | ------------- |
-| 2.*                   | 1.4.0, 1.1.0                                                  | See Note 2    |
-| 1.6.0                 | 1.4.0, 1.1.0                                                  | See Note 2    |
-| 1.5.0                 | 1.4.0, 1.1.0                                                  | See Note 2    |
-| 1.4.0                 | 1.4.0, 1.1.0                                                  | See Note 1    |
-| 1.3.1                 | 1.3.1                                                         |               |
-| 1.2.1                 | 1.2.0, 1.2.1                                                  |               |
-| 1.2.0                 | 1.2.0, 1.2.1                                                  |               |
-| 1.1.0                 | 1.1.0                                                         |               |
+| Type   | Version | Release Date | Compatible With Type | Versions     | Comments |
+|:------:|:-------:|:------------:|:--------------------:|:------------:|:--------:|
+| SDK    | 2.4.0   | 2023-07-17   | Driver               | 1.4.1, 1.4.2 |          |
+| Driver | 1.4.2   | 2023-06-16   | SDK                  | 2.3.0, 2.4.0 |          |
+| SDK    | 2.3.0   | 2023-01-20   | Driver               | 1.4.1, 1.4.2 |          |
+| Driver | 1.4.1   | 2021-04-14   | SDK                  | 2.3.0, 2.4.0 |          |
 
-<p style="text-align: center"><i>* If a Kandy HID SDK is being used with an older but still compatible version of Kandy HID Driver for VDI, any product limitations imposed by the older version of driver remain in effect unless otherwise specified.</i></p>
-
-### Notes and Limitations
-
-1- A limitation existed in Driver version 1.1 whereby handling of an incoming call while a HID device was engaged on a call was not deterministic and so it was recommended that HID devices not be instructed to 'start ringing' in that scenario.
-
-As a result, it is not possible to use the new functionality in SDK version 1.4 to reject an incoming call while on a call if driver version 1.1 is being used.
-
-2- Similar to Note 1, it is not possible to use the new functionality in SDK version 1.5 to answer an incoming call while on a call if driver version 1.1 is being used.
-
-Another limitation that existed in Driver version 1.1 was that calls could only be put on hold or resumed from the application, not from a HID device. As a result, it is not possible to initiate a call swap from a HID device when using driver version 1.1. Initiating a call swap from the application works as expected.
+If a WebRTC HID SDK is being used with an older but still compatible version of WebRTC HID Driver for VDI, any product limitations imposed by the older version of driver remain in effect unless otherwise specified.
