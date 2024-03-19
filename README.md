@@ -6,13 +6,13 @@ It is currently supported for use in Chrome-based Browsers (non-VDI) and Electro
 
 The following Jabra headsets and configurations are currently supported, with support for other devices and vendors possible.<br>
 
-| Device Make / Model | Desktop | VDI eLux | VDI Windows | VDI Mac |  Browser |   Firmware    |
-| :-----------------: | :-----: | :------: | :---------: | :-----: | :------: | :-----------: |
-|   Jabra Engage 65   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 2.0.5, 3.4.1  |
-|   Jabra Engage 50   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 1.24.0, 2.3.1 |
-| Jabra Engage 50 II  | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 3.7.2         |
-|   Jabra Speak 750   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 2.24.0        |
-|   Jabra Evolve2 40  | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 1.19.0        |
+| Device Make / Model | Desktop | VDI eLux | VDI Windows | VDI Mac |  Browser |   Firmware           |
+| :-----------------: | :-----: | :------: | :---------: | :-----: | :------: | :------------------: |
+|   Jabra Engage 65   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 2.0.5, 3.4.1, 5.11.0 |
+|   Jabra Engage 50   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 1.24.0, 2.3.1        |
+| Jabra Engage 50 II  | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 3.7.2, 3.9.0         |
+|   Jabra Speak 750   | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 2.24.0               |
+|   Jabra Evolve2 40  | &#9745; | &#9745;  |   &#9745;   | &#9745; | &#9745;  | 1.19.0               |
 
 As of version 2.0.0, this SDK is to be used in Electron's Renderer process, rather than the Main process. It's necessary to `require` the SDK in Electron's Main Process to maintain backwards-compatibility for configurations where WebHID is not used. See Installation and `initializeHIDDevices` below.
 
@@ -414,7 +414,7 @@ When the device is engaged in an active call, the call can be placed on hold or 
 
 ### Call Reject
 
-Rejecting an incoming call can be accomplished by:
+An incoming ringing call may be rejected on the device, regardless of whether the device is active on another call or not. Rejecting an incoming call can be accomplished by:
 
 #### Jabra Engage 65
 - pressing the red Call End button on the base
