@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.4.1 - 2024-10-16
+
+### Added
+- Ability for the parent application to pass in a function that will receive logs (KAJ-2148)
+- New value for `mode` in the initialization object - `'CitrixVDI'` - allows use of this SDK in a Citrix VDI environment for evaluation purposes (KAJ-2235)
+- Uses WebHID in Electron in desktop configurations where it's supported (Electron versions 16+) (KAJ-1156)
+
+### Deprecated
+- The ability to use this SDK in the following configurations will be removed in the next release:
+  - Desktop configuration where Electron version < 16 (pre-WebHID)
+  - Windows VDI configuration using Citrix's "USB Composite Device Redirection"
+  - Legacy VDI configuration with HID Driver version < 1.4.2
+
 ## 2.4.0 - 2023-07-17
 
 ### Changed
