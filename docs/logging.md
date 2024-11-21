@@ -14,7 +14,7 @@ Alternatively, the [`setLogger` API](./README_v1.MD#setloggercustomlogger-option
 
 ## Electron Renderer / Browser
 
-How and where logs are viewed in the Renderer process is controlled via the `rendererLogs` parameter of the [initializeHIDDevices())](../README.MD#initializehiddevicesconfig) API.
+How and where logs are viewed in the Renderer process is controlled via the `rendererLogs` parameter of the [initializeHIDDevices()](../README.MD#initializehiddevicesconfig) API.
 
 The `rendererLogs` parameter can be either a Boolean (`true`/`false`) or a function. Its default value is `false`, meaning that logs from the renderer process are not visible anywhere. If set to `true`, logs will output at 'info' level to the renderer process console.
 
