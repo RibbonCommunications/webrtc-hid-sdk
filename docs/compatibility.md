@@ -5,11 +5,11 @@ When used in a Citrix VDI eLux environment, the WebRTC HID SDK is backwards-comp
 ## Supported WebRTC HID SDK and HID Driver for VDI Versions
 Ribbon's standard support model provides full support for the current release and limited support for the previous release. This applies to both the HID SDK and Driver for VDI. When a new version of either SDK or Driver for VDI is released, it becomes the "current release", and so support ends for the N-2 release.
 
-| Type   | Version | Release Date | Compatible With Type | Versions     | Comments |
-|:------:|:-------:|:------------:|:--------------------:|:------------:|:--------:|
-| SDK    | 2.4.0   | 2023-07-17   | Driver               | 1.4.1, 1.4.2 |          |
-| Driver | 1.4.2   | 2023-06-16   | SDK                  | 2.3.0, 2.4.0 |          |
-| SDK    | 2.3.0   | 2023-01-20   | Driver               | 1.4.1, 1.4.2 |          |
-| Driver | 1.4.1   | 2021-04-14   | SDK                  | 2.3.0, 2.4.0 |          |
+| Type   | Version  | Release Date | Compatible With Type | Versions       | Comments |
+|:------:|:--------:|:------------:|:--------------------:|:--------------:|:--------:|
+| SDK    | 2.4.1    | 2024-10-16   | Driver               | 1.4.1, 1.4.2   | Driver versions <=1.4.1 deprecated |
+| Driver | 1.4.2-1  | 2025-00-00   | SDK                  | 2.4.0, 2.4.1   ||
+| SDK    | 2.4.0    | 2023-07-17   | Driver               | 1.4.1, 1.4.2-0 ||
+| Driver | 1.4.2-0  | 2023-06-16   | SDK                  | 2.4.0, 2.4.1   ||
 
-If a WebRTC HID SDK is being used with an older but still compatible version of WebRTC HID Driver for VDI, any product limitations imposed by the older version of driver remain in effect unless otherwise specified.
+If a WebRTC HID SDK is being used with an older but still compatible version of WebRTC HID Driver for VDI, any product limitations imposed by the older version of Driver remain in effect unless otherwise specified.
