@@ -8,7 +8,7 @@ Ribbon's standard support model provides full support for the current release an
 | Type   | Version  | Release Date | Compatible With Type | Versions       | Comments |
 |:------:|:--------:|:------------:|:--------------------:|:--------------:|:--------:|
 | SDK    | 2.4.1    | 2024-10-16   | Driver               | 1.4.1, 1.4.2   | Driver versions <=1.4.1 deprecated |
-| Driver | 1.4.2-1  | 2025-00-00   | SDK                  | 2.4.0, 2.4.1   ||
+| Driver | 1.4.2-1  | 2025-11-14   | SDK                  | 2.4.0, 2.4.1   ||
 | SDK    | 2.4.0    | 2023-07-17   | Driver               | 1.4.1, 1.4.2-0 ||
 | Driver | 1.4.2-0  | 2023-06-16   | SDK                  | 2.4.0, 2.4.1   ||
 
